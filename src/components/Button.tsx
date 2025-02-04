@@ -17,7 +17,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={`border rounded-lg bg-primary px-5 py-2 text-white ${className}`}
+      className={`border rounded-xl bg-primary px-5 py-2 text-white ${className}`}
       onClick={onClick}
       type={type}
       {...props}
