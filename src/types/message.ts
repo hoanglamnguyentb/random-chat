@@ -1,8 +1,8 @@
 import firebase from 'firebase/compat/app';
 export interface Message {
-  id: string;
-  chatId: string;
+  id?: string;
+  chatSessionId: string;
   senderId: string;
   content: string;
-  sentAt: firebase.firestore.Timestamp;
+  createdAt: firebase.firestore.Timestamp;
 }

@@ -8,12 +8,15 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Timestamp } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { redirect, useRouter } from 'next/navigation';
+import { useAuthStore } from '@/hooks/authStore';
 
 type Inputs = {
   username: string;
 };
 
 export default function Login() {
+  const { user, login, logout } = useAuthStore();
+
   const router = useRouter();
   const {
     register,
@@ -42,6 +45,7 @@ export default function Login() {
       });
 
       await createUser(user);
+      login(user.username);
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       router.push('/pages/chat');

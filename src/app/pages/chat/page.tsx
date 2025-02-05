@@ -1,12 +1,19 @@
+'use client';
 import Button from '@/components/Button';
+import { useChatSessionStore } from '@/hooks/chatSessionStore';
 
 export default function Chat() {
+  const { chatSession, setChatSession, clearChatSession } =
+    useChatSessionStore();
   return (
     <>
       <div className="h-screen">
         <div className="w-8/12 h-full  flex flex-col items-center m-auto">
           <div className="text-center p-3 font-boldf flex gap-2 items-center">
-            Cuộc hội thoại với <span className="underline">Phương Mỹ Chi</span>
+            Cuộc hội thoại{' '}
+            <span className="underline">
+              {chatSession ? chatSession.id : 'Chưa có cuộc hội thoại'}
+            </span>
             <span className="hover:bg-gray-200 bg-gray-100 rounded-full p-1 cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
