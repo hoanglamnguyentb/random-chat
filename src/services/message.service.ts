@@ -19,23 +19,17 @@ export const createMessage = async (message: Message): Promise<string> => {
 
 // Lấy tất cả tin nhắn theo sessionId
 export const getMessagesBySessionId = async (
-  sessionId: string
+  chatSessionId: string
 ): Promise<Message[]> => {
-  console.log('🚀 ~ sessionId:', sessionId);
   const q = query(
     messageCollection,
-    // where('sessionId', '==', sessionId), // Lọc theo sessionId
-    orderBy('createdAt', 'asc') // Sắp xếp theo thời gian
+    where('chatSessionId', '==', chatSessionId),
+    orderBy('createdAt', 'asc')
   );
-
   const querySnapshot = await getDocs(q);
-  console.log('🚀 ~ querySnapshot:', querySnapshot);
-
   const messages: Message[] = querySnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   })) as Message[];
-
-  console.log(messages);
   return messages;
 };

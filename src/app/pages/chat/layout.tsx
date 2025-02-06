@@ -10,6 +10,7 @@ import { useState } from 'react';
 import ProfileMenu from '@/components/ProfileMenu';
 import { Button } from '@/components/ui/button';
 import { AppWindow, Ellipsis, MessageCirclePlus } from 'lucide-react';
+import ChatSessions from '@/components/ChatSessions';
 
 export default function ChatLayout({
   children,
@@ -17,20 +18,20 @@ export default function ChatLayout({
   children: React.ReactNode;
 }>) {
   const { user, login, logout } = useAuthStore();
-  const { chatSession, setChatSession, clearChatSession } =
-    useChatSessionStore();
+  const { chatSession, setChatSession, addChatSession } = useChatSessionStore();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   async function createChatSession(): Promise<void> {
     const chatSessionNew = {
-      userIds: ['1', '2'],
+      userIds: [user?.id ?? '', 'Gemini'],
       createdAt: Timestamp.fromDate(new Date()),
       lastActive: Timestamp.fromDate(new Date()),
     };
     const idChatSession = await createChat(chatSessionNew);
 
     setChatSession({ ...chatSessionNew, id: idChatSession });
+    addChatSession({ ...chatSessionNew, id: idChatSession });
   }
 
   return (
@@ -56,10 +57,7 @@ export default function ChatLayout({
             </div>
             <div className="mb-auto">
               <div className="font-semibold px-2 text-sm">Today</div>
-              <Button variant="ghost" className="w-full justify-between">
-                Đoạn chat số 001
-                <Ellipsis />
-              </Button>
+              <ChatSessions></ChatSessions>
             </div>
             <div className="flex justify-between items-center h-[60px]">
               <ProfileMenu></ProfileMenu>

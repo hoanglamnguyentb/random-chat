@@ -19,17 +19,24 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useChatSessionStore } from '@/stores/chatSessionStore';
+import { deleteChatsByUserId } from '@/services/chatSession.service';
 
 const ProfileMenu = () => {
-  const { user, login, logout } = useAuthStore();
-  const { chatSession, setChatSession, clearChatSession } =
-    useChatSessionStore();
+  const { user, logout } = useAuthStore();
+  const { clearChatSession } = useChatSessionStore();
   const router = useRouter();
 
   function handleLogout() {
     logout();
     clearChatSession();
     router.push('/pages/login');
+  }
+
+  function deleteAllChatSessions() {
+    clearChatSession();
+    if (user?.id) {
+      deleteChatsByUserId(user.id);
+    }
   }
 
   return (
@@ -53,7 +60,7 @@ const ProfileMenu = () => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={deleteAllChatSessions}>
             <MessageCircleX />
             <span>Xoá hết cuộc hội thoại</span>
           </DropdownMenuItem>
