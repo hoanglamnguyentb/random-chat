@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+function testGame(value: string) : string {
+  return value;
+}
+
 // Custom hook useLocalStorage
 function useLocalStorage<T>(key: string, initialValue : T): [T, (value: T) => void] {
   // Kiểm tra nếu có giá trị trong localStorage, nếu không thì sử dụng giá trị mặc định
