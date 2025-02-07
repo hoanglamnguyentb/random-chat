@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from './ui/button';
-import {
-  Ellipsis,
-  MessageCircleX,
-  PencilLine,
-  UserRoundIcon,
-} from 'lucide-react';
+import { Ellipsis, MessageCircleX, PencilLine } from 'lucide-react';
 import {
   deleteChatSessionById,
   getChatsByUserId,
@@ -23,8 +18,13 @@ import { ChatSession } from '@/types/chatSession';
 
 const ChatSessions = () => {
   const { user } = useAuthStore();
-  const { chatSessions, setChatSessions, removeChatSession, setChatSession } =
-    useChatSessionStore();
+  const {
+    chatSession,
+    chatSessions,
+    setChatSessions,
+    removeChatSession,
+    setChatSession,
+  } = useChatSessionStore();
 
   useEffect(() => {
     if (!user?.id) return;
@@ -45,14 +45,14 @@ const ChatSessions = () => {
     setChatSession(chatSession);
   };
 
-  return (chatSessions ?? []).map((chatSession, index) => (
+  return (chatSessions ?? []).map((item, index) => (
     <Button
-      variant="ghost"
+      variant={`${item.id == chatSession?.id ? 'secondary' : 'ghost'}`}
       className="w-full justify-between"
       key={index}
-      onClick={handleSetChatSession(chatSession)}
+      onClick={handleSetChatSession(item)}
     >
-      {chatSession?.id}
+      {item?.id}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="cursor-pointer">
@@ -65,9 +65,7 @@ const ChatSessions = () => {
               <PencilLine />
               <span>Đổi tên</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => removeChatSessionById(chatSession.id)}
-            >
+            <DropdownMenuItem onClick={() => removeChatSessionById(item.id)}>
               <MessageCircleX className="text-red" />
               <span className="text-red">Xoá</span>
             </DropdownMenuItem>

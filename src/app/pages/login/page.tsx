@@ -10,19 +10,25 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type Inputs = {
   username: string;
+  term: boolean;
 };
 
 export default function Login() {
   const { login } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors },
   } = useForm<Inputs>();
 
@@ -41,10 +47,12 @@ export default function Login() {
 
     await toast.promise(
       (async () => {
+        setIsLoading(true);
         const userId = await createUser(user);
         login({ id: userId, ...user });
         await new Promise((resolve) => setTimeout(resolve, 2000));
         router.push('/pages/chat');
+        setIsLoading(false);
       })(),
       {
         pending: 'Đang tạo tài khoản...',
@@ -77,17 +85,33 @@ export default function Login() {
               },
             })}
           />
-          {/* <input
-            autoFocus
-            placeholder="Nhập tên đăng nhập"
-            className="border rounded-xl py-2 px-4 outline-none w-full"
-          /> */}
           {errors.username && (
             <span className="block text-rose-500 text-xs">
               {errors.username.message}
             </span>
           )}
-          <Button className=" w-full mt-2" type="submit">
+          <div className="flex items-center space-x-2 mt-2">
+            <Checkbox
+              id="terms"
+              {...register('term', { required: true })}
+              onCheckedChange={(checked) =>
+                setValue('term', checked as boolean)
+              }
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Đồng ý với điều khoản và điều kiện
+            </label>
+          </div>
+          {errors.term && (
+            <span className="block text-rose-500 text-xs">
+              *Bạn phải đồng ý với điều khoản và điều kiện.
+            </span>
+          )}
+          <Button className=" w-full mt-2" type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="animate-spin" />}
             Đăng ký
           </Button>
         </form>

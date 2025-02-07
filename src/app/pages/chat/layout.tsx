@@ -38,7 +38,7 @@ export default function ChatLayout({
     <>
       <div className="flex h-screen">
         <div
-          className={`flex-shrink-0 h-full  bg-gray-50 ${
+          className={`flex-shrink-0 h-full  bg-gray border-r ${
             isSidebarOpen ? 'w-[260px]' : 'w-0 overflow-hidden'
           }`}
         >
