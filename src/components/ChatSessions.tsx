@@ -1,6 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { Ellipsis, MessageCircleX, PencilLine } from 'lucide-react';
+import {
+  Ellipsis,
+  MessageCircleX,
+  PencilLine,
+  UserRoundIcon,
+} from 'lucide-react';
 import {
   deleteChatSessionById,
   getChatsByUserId,
@@ -14,17 +19,39 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
 import { ChatSession } from '@/types/chatSession';
 
 const ChatSessions = () => {
   const { user } = useAuthStore();
-  const {
-    chatSession,
-    chatSessions,
-    setChatSessions,
-    removeChatSession,
-    setChatSession,
-  } = useChatSessionStore();
+  const { chatSessions, setChatSessions, removeChatSession, setChatSession } =
+    useChatSessionStore();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -39,21 +66,22 @@ const ChatSessions = () => {
     if (!id) return;
     removeChatSession(id);
     deleteChatSessionById(id);
+    setIsDropdownOpen(false);
   }
 
   const handleSetChatSession = (chatSession: ChatSession) => () => {
     setChatSession(chatSession);
   };
 
-  return (chatSessions ?? []).map((item, index) => (
+  return (chatSessions ?? []).map((chatSession, index) => (
     <Button
-      variant={`${item.id == chatSession?.id ? 'secondary' : 'ghost'}`}
+      variant="ghost"
       className="w-full justify-between"
       key={index}
-      onClick={handleSetChatSession(item)}
+      onClick={handleSetChatSession(chatSession)}
     >
-      {item?.id}
-      <DropdownMenu>
+      {chatSession?.id}
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <div className="cursor-pointer">
             <Ellipsis />
@@ -61,14 +89,66 @@ const ChatSessions = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <PencilLine />
-              <span>Đổi tên</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => removeChatSessionById(item.id)}>
-              <MessageCircleX className="text-red" />
-              <span className="text-red">Xoá</span>
-            </DropdownMenuItem>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <PencilLine />
+                  <span>Đổi tên</span>
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Đổi tên</DialogTitle>
+                  <DialogDescription>Đổi tên cuộc hội thoại.</DialogDescription>
+                </DialogHeader>
+                <div className="flex items-center space-x-2">
+                  <div className="grid flex-1 gap-2">
+                    <Label htmlFor="link" className="sr-only">
+                      Link
+                    </Label>
+                    <Input
+                      id="link"
+                      defaultValue="https://ui.shadcn.com/docs/installation"
+                    />
+                  </div>
+                </div>
+                <DialogFooter className="sm:justify-end">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Huỷ bỏ
+                    </Button>
+                  </DialogClose>
+                  <Button type="button">Đồng ý</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <MessageCircleX className="text-red" />
+                  <span className="text-red">Xoá</span>
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Xóa đoạn chat?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Hành động này sẽ xóa <b>Tạo truy vấn dữ liệu.</b>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setIsDropdownOpen(false)}>
+                    Huỷ bỏ
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => removeChatSessionById(chatSession.id)}
+                  >
+                    Xoá
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

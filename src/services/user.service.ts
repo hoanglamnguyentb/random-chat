@@ -10,12 +10,21 @@ import {
 } from 'firebase/firestore';
 import { User } from '../types/user';
 import { db } from './firebase';
+import { compare, hash } from 'bcryptjs';
+import { Role } from '@/consts/role';
 
 const usersCollection = collection(db, 'users');
 
 // Tạo người dùng
 export const createUser = async (user: User): Promise<string> => {
-  const docRef = await addDoc(usersCollection, user);
+  const hashedPassword = await hash(user.password, 10);
+  const newUser = {
+    username: user.username,
+    role: user.role ?? Role.USER,
+    createdAt: new Date().toISOString(),
+    password: hashedPassword,
+  };
+  const docRef = await addDoc(usersCollection, newUser);
   return docRef.id;
 };
 
@@ -53,4 +62,38 @@ export const getUser = async (userId: string): Promise<User | null> => {
 export const updateUser = async (userId: string, data: Partial<User>) => {
   const docRef = doc(db, 'users', userId);
   await updateDoc(docRef, data);
+};
+
+// Đăng nhập
+export const loginUser = async (
+  username: string,
+  password: string
+): Promise<string> => {
+  try {
+    // Tìm user trong Firestore theo email
+    const q = query(usersCollection, where('username', '==', username));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      throw new Error('*Email hoặc mật khẩu không đúng.');
+    }
+
+    // Lấy thông tin user đầu tiên tìm thấy
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data() as User;
+
+    // So sánh mật khẩu nhập vào với mật khẩu trong database
+    if (!userData.password) {
+      throw new Error('*Email hoặc mật khẩu không đúng.');
+    }
+
+    const isPasswordValid = await compare(password, userData.password);
+    if (!isPasswordValid) {
+      throw new Error('*Email hoặc mật khẩu không đúng.');
+    }
+
+    return userDoc.id; // Trả về userId nếu đăng nhập thành công
+  } catch (error) {
+    throw error;
+  }
 };

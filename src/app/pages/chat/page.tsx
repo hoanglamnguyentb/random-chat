@@ -79,9 +79,9 @@ export default function Chat() {
       <div className="h-screen relative">
         {chatSession && (
           <div className="text-center p-3 bg-white w-full flex gap-2 items-center justify-center absolute top-0 -translate-x-1/2 left-1/2 backdrop-blur">
-            Cuộc hội thoại{' '}
+            Cuộc hội thoại
             <span className="underline">
-              {chatSession ? chatSession.id : 'Chưa có cuộc hội thoại'}
+              {chatSession.title ? chatSession.id : 'Chưa có cuộc hội thoại'}
             </span>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Trash />

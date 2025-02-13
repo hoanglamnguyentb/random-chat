@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import {
   checkIfUserExistsByUsername,
   createUser,
-  loginUser,
 } from '@/services/user.service';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
@@ -18,9 +17,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 type Inputs = {
   username: string;
   password: string;
+  term: boolean;
 };
 
-export default function Login() {
+export default function SingUp() {
   const { login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -33,28 +33,39 @@ export default function Login() {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const handleLoginUser = async (username: string, password: string) => {
-    try {
-      setIsLoading(true);
-      const userId = await loginUser(username, password);
-      login({ id: userId, username, password });
-      router.push('/pages/chat');
-      setIsLoading(false);
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Đã có lỗi xảy ra!';
+  const handleCreateUser = async (username: string, password: string) => {
+    const userExists = await checkIfUserExistsByUsername(username);
+    if (userExists) {
       setError('username', {
         type: 'manual',
-        message: errorMessage,
+        message: '*Tên đăng nhập đã tồn tại',
       });
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    const now = Timestamp.fromDate(new Date());
+    const user = { username, password, createdAt: now, lastActive: now };
+
+    await toast.promise(
+      (async () => {
+        setIsLoading(true);
+        const userId = await createUser(user);
+        login({ id: userId, ...user });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        router.push('/pages/chat');
+        setIsLoading(false);
+      })(),
+      {
+        pending: 'Đang tạo tài khoản...',
+        // success: '🦄 Tạo tài khoản thành công! Đang chuyển hướng...',
+        error: 'Có lỗi xảy ra!',
+      }
+    );
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      await handleLoginUser(data.username, data.password);
+      await handleCreateUser(data.username, data.password);
     } catch (error) {
       console.error('Error creating user:', error);
     }
@@ -66,8 +77,8 @@ export default function Login() {
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <Input
             type="text"
-            className="mb-2"
             placeholder="Nhập tên đăng nhập"
+            className="mb-2"
             {...register('username', {
               required: '*Tên đăng nhập không được để trống',
               pattern: {
@@ -96,10 +107,29 @@ export default function Login() {
               {errors.password.message}
             </span>
           )}
-
+          <div className="flex items-center space-x-2 mt-2">
+            <Checkbox
+              id="terms"
+              {...register('term', { required: true })}
+              onCheckedChange={(checked) =>
+                setValue('term', checked as boolean)
+              }
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Đồng ý với điều khoản và điều kiện
+            </label>
+          </div>
+          {errors.term && (
+            <span className="block text-rose-500 text-xs">
+              *Bạn phải đồng ý với điều khoản và điều kiện.
+            </span>
+          )}
           <Button className=" w-full mt-2" type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="animate-spin" />}
-            Đăng nhập
+            Đăng ký
           </Button>
         </form>
       </div>
