@@ -29,7 +29,6 @@ export default function ChatLayout({
       lastActive: Timestamp.fromDate(new Date()),
     };
     const idChatSession = await createChat(chatSessionNew);
-
     setChatSession({ ...chatSessionNew, id: idChatSession });
     addChatSession({ ...chatSessionNew, id: idChatSession });
   }

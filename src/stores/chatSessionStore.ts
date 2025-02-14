@@ -14,6 +14,7 @@ interface ChatSessionState {
   setChatSessions: (chat: ChatSession[]) => void;
   removeChatSession: (chatId: string) => void;
   clearChatSessions: () => void;
+  updateChatSessionTitle: (id: string, newTitle: string) => void;
 }
 
 export const useChatSessionStore = create(
@@ -28,6 +29,15 @@ export const useChatSessionStore = create(
           chatSessions: state.chatSessions
             ? [newChat, ...state.chatSessions]
             : [newChat],
+        })),
+
+      updateChatSessionTitle: (id, newTitle) =>
+        set((state) => ({
+          chatSessions: state.chatSessions
+            ? state.chatSessions.map((chat) =>
+                chat.id === id ? { ...chat, title: newTitle } : chat
+              )
+            : null,
         })),
 
       chatSessions: null,

@@ -8,6 +8,7 @@ import {
   serverTimestamp,
   doc,
   deleteDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { ChatSession } from '@/types/chatSession';
@@ -21,6 +22,15 @@ export const createChat = async (chat: ChatSession): Promise<string> => {
     createdAt: serverTimestamp(), // Thêm timestamp để sắp xếp
   });
   return docRef.id;
+};
+
+// Đổi tiên cuộc hội thoại
+export const renameChatTitle = async (
+  chatSessionId: string,
+  newName: string
+): Promise<void> => {
+  const chatDocRef = doc(db, 'chats', chatSessionId);
+  await updateDoc(chatDocRef, { title: newName });
 };
 
 // Lấy tất cả các sessionChat theo userId

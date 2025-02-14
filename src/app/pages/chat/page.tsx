@@ -1,4 +1,5 @@
 'use client';
+import ChatSessionTitle from '@/components/ChatSessionTitle';
 import { Button } from '@/components/ui/button';
 import { generateAIResponse } from '@/services/gemini.service';
 import {
@@ -77,18 +78,7 @@ export default function Chat() {
   return (
     <>
       <div className="h-screen relative">
-        {chatSession && (
-          <div className="text-center p-3 bg-white w-full flex gap-2 items-center justify-center absolute top-0 -translate-x-1/2 left-1/2 backdrop-blur">
-            Cuộc hội thoại
-            <span className="underline">
-              {chatSession.title ? chatSession.id : 'Chưa có cuộc hội thoại'}
-            </span>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Trash />
-            </Button>
-            <div className="w-full h-[50px] absolute bottom-[-50px] bg-gradient-to-b from-white to-white-0"></div>
-          </div>
-        )}
+        <ChatSessionTitle></ChatSessionTitle>
         <div className="h-full overflow-y-auto pt-16 pb-20">
           <div className="w-8/12 flex flex-col items-center m-auto">
             <div className="w-full flex-1">
