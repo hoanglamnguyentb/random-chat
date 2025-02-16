@@ -18,12 +18,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useChatSessionStore } from '@/stores/chatSessionStore';
 import { deleteChatsByUserId } from '@/services/chatSession.service';
+import { useState } from 'react';
 
 const ProfileMenu = () => {
   const { user, logout } = useAuthStore();
-  const { clearChatSession } = useChatSessionStore();
+  const { clearChatSession, clearChatSessions } = useChatSessionStore();
   const router = useRouter();
 
   function handleLogout() {
@@ -34,6 +46,7 @@ const ProfileMenu = () => {
 
   function deleteAllChatSessions() {
     clearChatSession();
+    clearChatSessions();
     if (user?.id) {
       deleteChatsByUserId(user.id);
     }
@@ -44,7 +57,7 @@ const ProfileMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="w-full justify-start">
           <CircleUser />
-          Xin chào, {user?.username} - {user?.id}
+          Xin chào, {user?.username}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -60,10 +73,28 @@ const ProfileMenu = () => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={deleteAllChatSessions}>
-            <MessageCircleX />
-            <span>Xoá hết cuộc hội thoại</span>
-          </DropdownMenuItem>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <MessageCircleX />
+                <span>Xoá hết cuộc hội thoại</span>
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Xóa tất cả đoạn chat?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Hành động này sẽ xóa <b>Tạo truy vấn dữ liệu.</b>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Huỷ bỏ</AlertDialogCancel>
+                <AlertDialogAction onClick={deleteAllChatSessions}>
+                  Đồng ý
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>

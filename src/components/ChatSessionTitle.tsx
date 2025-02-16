@@ -27,7 +27,6 @@ const ChatSessionTitle = () => {
   }
 
   useEffect(() => {
-    console.log('🟢 ChatSession thay đổi:', chatSession);
   }, [chatSession]);
 
   return (
@@ -64,6 +63,7 @@ const ChatSessionTitle = () => {
           <div className="w-full h-[50px] absolute bottom-[-50px] bg-gradient-to-b from-white to-white-0"></div>
         </div>
       )}
+      
     </>
   );
 };

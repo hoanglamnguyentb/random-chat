@@ -1,19 +1,12 @@
 'use client';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { Timestamp } from 'firebase/firestore';
-import { toast } from 'react-toastify';
-import {
-  checkIfUserExistsByUsername,
-  createUser,
-  loginUser,
-} from '@/services/user.service';
+import { loginUser } from '@/services/user.service';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
 
 type Inputs = {
   username: string;
@@ -29,17 +22,17 @@ export default function Login() {
     register,
     handleSubmit,
     setError,
-    setValue,
     formState: { errors },
   } = useForm<Inputs>();
 
-  const handleLoginUser = async (username: string, password: string) => {
+  const handleLoginUser = async (
+    username: string,
+    password: string
+  ): Promise<boolean> => {
     try {
-      setIsLoading(true);
       const userId = await loginUser(username, password);
       login({ id: userId, username, password });
-      router.push('/pages/chat');
-      setIsLoading(false);
+      return true;
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Đã có lỗi xảy ra!';
@@ -47,16 +40,21 @@ export default function Login() {
         type: 'manual',
         message: errorMessage,
       });
-    } finally {
-      setIsLoading(false);
+      return false;
     }
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      await handleLoginUser(data.username, data.password);
+      setIsLoading(true);
+      const success = await handleLoginUser(data.username, data.password);
+      if (!success) return;
+      router.push('/pages/chat');
+      setIsLoading(false);
     } catch (error) {
       console.error('Error creating user:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -103,7 +101,9 @@ export default function Login() {
           </Button>
         </form>
       </div>
-      <div className="text-gray-400 my-4">hoanglamnguyentb@gmail.com</div>
+      <div className="text-gray-400 my-4">
+        {process.env.NEXT_PUBLIC_FOOTER_TITLE}
+      </div>
     </div>
   );
 }

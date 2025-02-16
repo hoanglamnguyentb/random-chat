@@ -88,12 +88,14 @@ export const loginUser = async (
     }
 
     const isPasswordValid = await compare(password, userData.password);
+
     if (!isPasswordValid) {
       throw new Error('*Email hoặc mật khẩu không đúng.');
     }
 
     return userDoc.id; // Trả về userId nếu đăng nhập thành công
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };
