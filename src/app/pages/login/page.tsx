@@ -64,7 +64,7 @@ export default function Login() {
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <Input
             type="text"
-            className="mb-2"
+            className="mb-2 rounded-xl"
             placeholder="Nhập tên đăng nhập"
             {...register('username', {
               required: '*Tên đăng nhập không được để trống',
@@ -83,7 +83,7 @@ export default function Login() {
           <Input
             type="text"
             placeholder="Nhập mật khẩu"
-            className="mb-2"
+            className="mb-2 rounded-xl"
             {...register('password', {
               required: '*Mật khẩu không được để trống.',
               minLength: { value: 8, message: '* Mật khẩu tối thiểu 8 ký tự.' },
@@ -95,7 +95,11 @@ export default function Login() {
             </span>
           )}
 
-          <Button className=" w-full mt-2" type="submit" disabled={isLoading}>
+          <Button
+            className=" w-full mt-2 rounded-xl"
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading && <Loader2 className="animate-spin" />}
             Đăng nhập
           </Button>

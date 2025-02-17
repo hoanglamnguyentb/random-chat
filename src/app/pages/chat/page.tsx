@@ -19,6 +19,7 @@ import { AppWindow } from 'lucide-react';
 import ChatSessions from '@/components/ChatSessions';
 import CreateChatSessionButton from '@/components/CreateChatSessionButton';
 import { Skeleton } from '@/components/ui/skeleton';
+import StartChat from '@/components/StartChat';
 
 type Inputs = {
   message: string;
@@ -170,7 +171,7 @@ export default function Chat() {
               </div>
             </div>
           </div>
-          <div className="text-center w-full bg-white absolute -translate-x-1/2 left-1/2 bottom-0">
+          {/* <div className="text-center w-full bg-white absolute -translate-x-1/2 left-1/2 bottom-0">
             <div className="w-8/12 m-auto bg-gray-100 p-2 rounded-xl mb-3">
               <form
                 onSubmit={handleSubmit(onSubmit)}
@@ -188,8 +189,9 @@ export default function Chat() {
                 </Button>
               </form>
             </div>
-          </div>
-        </div>{' '}
+          </div> */}
+          <StartChat></StartChat>
+        </div>
       </div>
     </>
   );
