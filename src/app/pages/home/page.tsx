@@ -27,7 +27,7 @@ type Inputs = {
   message: string;
 };
 
-export default function Chat() {
+export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -106,72 +106,7 @@ export default function Chat() {
           <HomeButton></HomeButton>
         </div>
         <div className="h-screen relative">
-          <ChatSessionTitle></ChatSessionTitle>
-          <div className="h-full overflow-y-auto pt-16 pb-20">
-            <div className="w-8/12 flex flex-col items-center m-auto">
-              <div className="w-full flex-1">
-                {messages.map((msg, index) => {
-                  if (msg.senderId == user?.id) {
-                    return (
-                      <div
-                        className="flex items-center justify-end mb-3"
-                        key={index}
-                      >
-                        <div className="bg-sky-100 rounded-xl p-2 max-w-sm">
-                          {msg.content}
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div className="flex mb-3 gap-2" key={index}>
-                        <Image
-                          src="https://picsum.photos/50/50"
-                          width={50}
-                          height={50}
-                          alt="Picture of the author"
-                          className="w-8 h-8 rounded-full mr-2"
-                        />
-                        <div className=""> {msg.content}</div>
-                      </div>
-                    );
-                  }
-                })}
-                {isTyping && (
-                  <div className="flex mb-3 gap-2">
-                    <Image
-                      src="https://picsum.photos/50/50"
-                      width={50}
-                      height={50}
-                      alt="Picture of the author"
-                      className="w-8 h-8 rounded-full mr-2"
-                    />
-                    <Skeleton className="h-10 w-full" />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="text-center w-full bg-white absolute -translate-x-1/2 left-1/2 bottom-0">
-            <div className="w-8/12 m-auto bg-gray-100 p-2 rounded-xl mb-3">
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex items-center"
-                autoComplete="off"
-              >
-                <input
-                  className="w-full rounded-lg rounded-r-none p-2 outline-none bg-transparent"
-                  type="text"
-                  placeholder="Tin nhắn của bạn..."
-                  {...register('message')}
-                />
-                <Button type="submit" className="size-8 p-2 rounded-full">
-                  {isTyping ? <Loader2 className="animate-spin" /> : <Send />}
-                </Button>
-              </form>
-            </div>
-          </div>
-          {/* <StartChat></StartChat> */}
+          <StartChat></StartChat>
         </div>
       </div>
     </>
