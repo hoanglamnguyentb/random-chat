@@ -16,18 +16,20 @@ const StartChat = () => {
   const { user } = useAuthStore();
   const { setChatSession, addChatSession } = useChatSessionStore();
 
-  const [searchModel, setSearchModel] = useState(() => {
-    return JSON.parse(localStorage.getItem('searchModel') || '[]') || [];
-  });
+  const [searchModel, setSearchModel] = useState<string[]>([]);
 
   const [roomId, setRoomId] = useState<string | null>(null);
 
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (!user?.id) return;
-    localStorage.setItem('searchModel', JSON.stringify(searchModel));
-  }, [searchModel]);
+    if (typeof window !== 'undefined') {
+      const data = localStorage.getItem('searchModel');
+      if (data) {
+        setSearchModel(JSON.parse(data));
+      }
+    }
+  }, []);
 
   const handleSelect = (id: string) => {
     setSearchModel((prev: string[]) => {

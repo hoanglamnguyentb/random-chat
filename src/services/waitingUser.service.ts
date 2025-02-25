@@ -28,7 +28,7 @@ export const findMatch = async (userId: string) => {
 
       // Tạo phòng chat mới (chỉ một lần)
       const chatRoomRef = await addDoc(collection(db, 'chats'), {
-        users: [userId, partnerId],
+        userIds: [userId, partnerId],
         createdAt: Timestamp.fromDate(new Date()),
         lastActive: Timestamp.fromDate(new Date()),
       });
